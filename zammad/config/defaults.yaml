@@ -7,6 +7,7 @@ zammad:
   env:
     POSTGRES_USER=zammad
     POSTGRES_PASSWORD=zammad
+    POSTGRES_DB=zammad
   elasticsearch:
     image: zammad/zammad-docker-compose:zammad-elasticsearch-3.4.0-17
   postgres:
