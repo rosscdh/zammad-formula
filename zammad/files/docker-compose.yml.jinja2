@@ -54,7 +54,7 @@ services:
 
   zammad-nginx:
     command: ["zammad-nginx"]
-    expose:
+    ports:
       - "{{ config.port }}:80"
     depends_on:
       - zammad-railsserver
