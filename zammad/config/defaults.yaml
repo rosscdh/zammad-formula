@@ -1,6 +1,7 @@
 zammad:
   location: /opt/zammad
   image: zammad/zammad-docker-compose:zammad-3.4.0-17
+  zammad_version: "-3.4.0-17"
   restart: UnlessStopped
   env:
     POSTGRES_USER=zammad
