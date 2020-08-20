@@ -1,8 +1,7 @@
 zammad:
   location: /opt/zammad
-  image: zammad/zammad-docker-compose
+  image: zammad/zammad-docker-compose:zammad-3.4.0-17
   restart: UnlessStopped
-  zammad_version: 3.4.0-4
   postgres:
     user: zammad
     password: zammad
