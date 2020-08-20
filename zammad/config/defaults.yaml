@@ -3,7 +3,7 @@ zammad:
   image: zammad/zammad-docker-compose:zammad-3.4.0-17
   zammad_version: "-3.4.0-17"
   port: 8008
-  restart: UnlessStopped
+  restart: unless-stopped
   env:
     POSTGRES_USER=zammad
     POSTGRES_PASSWORD=zammad
