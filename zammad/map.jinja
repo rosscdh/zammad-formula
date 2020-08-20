@@ -1,0 +1,2 @@
+{% import_yaml 'zammad/config/defaults.yaml' as preconfig %}
+{% set config = salt.pillar.get( 'zammad', default=preconfig.zammad, merge=True ) %}
