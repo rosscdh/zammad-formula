@@ -2,6 +2,10 @@ zammad:
   location: /opt/zammad
   image: zammad/zammad-docker-compose:zammad-3.4.0-17
   restart: UnlessStopped
+  env:
+    POSTGRES_USER=zammad
+    POSTGRES_PASSWORD=zammad
+  elasticsearch:
+    image: zammad/zammad-docker-compose:zammad-elasticsearch-3.4.0-17
   postgres:
-    user: zammad
-    password: zammad
+    image: zammad/zammad-docker-compose:zammad-postgresql-3.4.0-17
