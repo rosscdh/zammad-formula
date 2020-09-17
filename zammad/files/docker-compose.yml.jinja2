@@ -65,7 +65,7 @@ services:
     volumes:
       - zammad-data:/opt/zammad
 
-{%- if config.env.POSTGRESQL_HOST == 'zammad-postgresql' %}
+{%- if config.env.get('POSTGRESQL_HOST', 'zammad-postgresql') == 'zammad-postgresql' %}
   zammad-postgresql:
     image: {{ config.postgres.image }}
     restart: {{ config.restart }}
