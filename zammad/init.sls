@@ -17,3 +17,11 @@ zammad_compose_file:
   - source: salt://zammad/files/docker-compose.yml.jinja2
   - template: jinja
 
+
+{{ config.location }}/docker-compose.yml:
+  dockercompose.restart:
+    - enable: True
+    - reload: True
+    - watch:
+      - zammad_compose_file
+      - file: {{ config.location }}/.env
