@@ -26,9 +26,9 @@ zammad_compose_file:
   - template: jinja
 
 {{ config.location }}/docker-compose.yml:
-  dockercompose.restart:
-    - enable: True
-    - reload: True
+  cmd.run:
+    - cwd: {{ config.location }}
+    - name: docker-compose up -d
     - watch:
-      - zammad_compose_file
+      - file: {{ config.location }}/docker-compose.yml
       - file: {{ config.location }}/.env
