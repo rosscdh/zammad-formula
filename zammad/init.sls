@@ -14,12 +14,10 @@ install_compose:
     - makedirs: True
 
 zammad_env_file:
-  file.serialize:
+  file.managed:
   - name: {{ config.location }}/.env
-  - formatter: configparser
-  - dataset: {{ config.env }}
-#  - source: salt://zammad/files/.env.jinja2
-#  - template: jinja
+  - source: salt://zammad/files/.env.jinja2
+  - template: jinja
 
 zammad_compose_file:
   file.managed:
