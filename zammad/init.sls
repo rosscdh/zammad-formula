@@ -27,8 +27,6 @@ zammad_compose_file:
   - source: salt://zammad/files/docker-compose.yml.jinja2
   - template: jinja
 
-<<<<<<< Updated upstream
-
 {{ config.location }}/docker-compose.yml:
   dockercompose.restart:
     - enable: True
@@ -36,14 +34,3 @@ zammad_compose_file:
     - watch:
       - zammad_compose_file
       - file: {{ config.location }}/.env
-=======
-start_zammad:
-  dockercompose.up:
-  - name: {{ config.location }}/docker-compose.yml
-
-restart_zammad:
-  dockercompose.restart:
-  - watch:
-    - file: {{ config.location }}/.env
-    - file: {{ config.location }}/docker-compose.yml
->>>>>>> Stashed changes
