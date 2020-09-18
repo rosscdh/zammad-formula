@@ -17,7 +17,7 @@ zammad_env_file:
   file.serialize:
   - name: {{ config.location }}/.env
   - formatter: configparser
-  - dataset: {{ config.env }}
+  - dataset: {{ config.env | load_json }}
 #  - source: salt://zammad/files/.env.jinja2
 #  - template: jinja
 
