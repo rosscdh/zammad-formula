@@ -4,10 +4,10 @@ zammad:
   port: 8008
   restart: unless-stopped
   env:
-    POSTGRESQL_HOST=zammad-postgresql
-    POSTGRES_USER=zammad
-    POSTGRES_PASSWORD=zammad
-    POSTGRES_DB=zammad_production
+    POSTGRESQL_HOST: zammad-postgresql
+    POSTGRES_USER: zammad
+    POSTGRES_PASSWORD: zammad
+    POSTGRES_DB: zammad_production
   elasticsearch:
     image: zammad/zammad-docker-compose:zammad-elasticsearch-3.4.0-17
   postgres:
