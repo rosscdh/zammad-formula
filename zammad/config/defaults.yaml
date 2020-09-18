@@ -3,12 +3,19 @@ zammad:
   image: zammad/zammad-docker-compose:zammad-3.4.0-17
   port: 8008
   restart: unless-stopped
+  local_backups: true
   env:
     POSTGRESQL_HOST: zammad-postgresql
     POSTGRES_USER: zammad
     POSTGRES_PASSWORD: zammad
     POSTGRES_DB: zammad_production
   elasticsearch:
+    enabled: true
     image: zammad/zammad-docker-compose:zammad-elasticsearch-3.4.0-17
   postgres:
+    enabled: true
     image: zammad/zammad-docker-compose:zammad-postgresql-3.4.0-17
+  memcache:
+    enabled: true
+    mem: 128M
+    image: memcached:1.5.22-alpine

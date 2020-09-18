@@ -2,24 +2,27 @@
 version: "3"
 
 services:
-#  zammad-backup:
-#    command: ["zammad-backup"]
-#    depends_on:
-#      - zammad-railsserver
-#    entrypoint: /usr/local/bin/backup.sh
-#    environment:
-#      - BACKUP_SLEEP=86400
-#      - HOLD_DAYS=10
-#      - POSTGRESQL_USER=${POSTGRES_USER}
-#      - POSTGRESQL_PASSWORD=${POSTGRES_PASS}
-#    image: ${IMAGE_REPO}:zammad-postgresql${VERSION}
-#    networks:
-#      - backend
-#    restart: ${RESTART}
-#    volumes:
-#      - zammad-backup:/var/tmp/zammad
-#      - zammad-data:/opt/zammad
+  {%- if config.local_backups %}
+  zammad-backup:
+    command: ["zammad-backup"]
+    depends_on:
+      - zammad-railsserver
+    entrypoint: /usr/local/bin/backup.sh
+    environment:
+      - BACKUP_SLEEP=86400
+      - HOLD_DAYS=10
+    env_file:
+      - {{ config.location }}/.env
+    image: {{ config.postgres.image }}
+    networks:
+      - backend
+    restart: {{ config.restart }}
+    volumes:
+      - zammad-backup:/var/tmp/zammad
+      - zammad-data:/opt/zammad
+  {%- endif %}
 
+  {%- if config.elasticsearch.enabled %}
   zammad-elasticsearch:
     env_file:
       - {{ config.location }}/.env
@@ -31,13 +34,16 @@ services:
       - backend
     volumes:
       - elasticsearch-data:/usr/share/elasticsearch/data
+  {%- endif %}
 
   zammad-init:
     command: ["zammad-init"]
+    {%- if config.postgres.enabled %}
     depends_on:
       - zammad-postgresql
+    {%- endif %}
     env_file:
-      - {{ config.location }}/.env     
+      - {{ config.location }}/.env
     image: {{ config.image }}
     networks:
       - backend
@@ -45,14 +51,19 @@ services:
     volumes:
       - zammad-data:/opt/zammad
 
+  {%- if config.memcache.enabled %}
   zammad-memcached:
-    command: memcached -m 128M
-    image: memcached:1.5.22-alpine
+    command: memcached -m {{ config.memcache.mem }}
+    env_file:
+      - {{ config.location }}/.env
+    image: {{ config.memcache.image }}
     restart: {{ config.restart }}
     networks:
       - backend
+  {%- endif %}}
 
   zammad-nginx:
+    image: ${IMAGE_REPO}:zammad${VERSION}
     command: ["zammad-nginx"]
     ports:
       - "{{ config.port }}:80"
@@ -65,7 +76,7 @@ services:
     volumes:
       - zammad-data:/opt/zammad
 
-{%- if config.get('env', {}).get('POSTGRESQL_HOST', 'zammad-postgresql') == 'zammad-postgresql' %}
+  {%- if config.postgres.enabled %}
   zammad-postgresql:
     image: {{ config.postgres.image }}
     restart: {{ config.restart }}
@@ -75,13 +86,10 @@ services:
       - backend
     volumes:
       - postgresql-data:/var/lib/postgresql/data
-{%- endif %}
+  {%- endif %}
 
   zammad-railsserver:
     command: ["zammad-railsserver"]
-    depends_on:
-      - zammad-memcached
-      - zammad-postgresql
     image: {{ config.image }}
     restart: {{ config.restart }}
     networks:
@@ -93,7 +101,6 @@ services:
   zammad-scheduler:
     command: ["zammad-scheduler"]
     depends_on:
-      - zammad-memcached
       - zammad-railsserver
     image: {{ config.image }}
     networks:
@@ -105,7 +112,6 @@ services:
   zammad-websocket:
     command: ["zammad-websocket"]
     depends_on:
-      - zammad-memcached
       - zammad-railsserver
     image: {{ config.image }}
     networks:
@@ -116,12 +122,18 @@ services:
       - zammad-data:/opt/zammad
 
 volumes:
+  {%- if config.elasticsearch.enabled %}
   elasticsearch-data:
     driver: local
+  {%- endif %}
+  {%- if config.postgres.enabled %}
   postgresql-data:
     driver: local
+  {%- endif %}
+  {%- if config.local_backups %}
   zammad-backup:
     driver: local
+  {%- endif %}
   zammad-data:
     driver: local
 
