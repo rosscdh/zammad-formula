@@ -60,7 +60,7 @@ services:
     restart: {{ config.restart }}
     networks:
       - backend
-  {%- endif %}}
+  {%- endif %}
 
   zammad-nginx:
     image: ${IMAGE_REPO}:zammad${VERSION}
