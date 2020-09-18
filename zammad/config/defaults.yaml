@@ -1,8 +1,14 @@
 zammad:
   location: /opt/zammad
-  image: zammad/zammad-docker-compose
-  restart: UnlessStopped
-  zammad_version: 3.4.0-4
+  image: zammad/zammad-docker-compose:zammad-3.4.0-17
+  port: 8008
+  restart: unless-stopped
+  env:
+    POSTGRESQL_HOST: zammad-postgresql
+    POSTGRES_USER: zammad
+    POSTGRES_PASSWORD: zammad
+    POSTGRES_DB: zammad_production
+  elasticsearch:
+    image: zammad/zammad-docker-compose:zammad-elasticsearch-3.4.0-17
   postgres:
-    user: zammad
-    password: zammad
+    image: zammad/zammad-docker-compose:zammad-postgresql-3.4.0-17

@@ -2,29 +2,31 @@
 version: "3"
 
 services:
-  zammad-backup:
-    command: ["zammad-backup"]
-    depends_on:
-      - zammad-railsserver
-    entrypoint: /usr/local/bin/backup.sh
-    environment:
-      - BACKUP_SLEEP=86400
-      - HOLD_DAYS=10
-      - POSTGRESQL_USER=${POSTGRES_USER}
-      - POSTGRESQL_PASSWORD=${POSTGRES_PASS}
-    image: ${IMAGE_REPO}:zammad-postgresql${VERSION}
-    networks:
-      - backend
-    restart: ${RESTART}
-    volumes:
-      - zammad-backup:/var/tmp/zammad
-      - zammad-data:/opt/zammad
+#  zammad-backup:
+#    command: ["zammad-backup"]
+#    depends_on:
+#      - zammad-railsserver
+#    entrypoint: /usr/local/bin/backup.sh
+#    environment:
+#      - BACKUP_SLEEP=86400
+#      - HOLD_DAYS=10
+#      - POSTGRESQL_USER=${POSTGRES_USER}
+#      - POSTGRESQL_PASSWORD=${POSTGRES_PASS}
+#    image: ${IMAGE_REPO}:zammad-postgresql${VERSION}
+#    networks:
+#      - backend
+#    restart: ${RESTART}
+#    volumes:
+#      - zammad-backup:/var/tmp/zammad
+#      - zammad-data:/opt/zammad
 
   zammad-elasticsearch:
+    env_file:
+      - {{ config.location }}/.env
     environment:
       - discovery.type=single-node
-    image: ${IMAGE_REPO}:zammad-elasticsearch${VERSION}
-    restart: ${RESTART}
+    image: {{ config.elasticsearch.image }}
+    restart: {{ config.restart }}
     networks:
       - backend
     volumes:
@@ -34,10 +36,9 @@ services:
     command: ["zammad-init"]
     depends_on:
       - zammad-postgresql
-    environment:
-      - POSTGRESQL_USER=${POSTGRES_USER}
-      - POSTGRESQL_PASS=${POSTGRES_PASS}      
-    image: ${IMAGE_REPO}:zammad${VERSION}
+    env_file:
+      - {{ config.location }}/.env     
+    image: {{ config.image }}
     networks:
       - backend
     restart: on-failure
@@ -45,47 +46,44 @@ services:
       - zammad-data:/opt/zammad
 
   zammad-memcached:
-    command: memcached -m 256M
+    command: memcached -m 128M
     image: memcached:1.5.22-alpine
-    restart: ${RESTART}
+    restart: {{ config.restart }}
     networks:
       - backend
 
   zammad-nginx:
     command: ["zammad-nginx"]
-    expose:
-      - "80"
+    ports:
+      - "{{ config.port }}:80"
     depends_on:
       - zammad-railsserver
-    image: ${IMAGE_REPO}:zammad${VERSION}
+    image: {{ config.image }}
     networks:
       - frontend
-    restart: ${RESTART}
+    restart: {{ config.restart }}
     volumes:
       - zammad-data:/opt/zammad
 
+{%- if config.get('env', {}).get('POSTGRESQL_HOST', 'zammad-postgresql') == 'zammad-postgresql' %}
   zammad-postgresql:
-    environment:
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASS}
-    image: ${IMAGE_REPO}:zammad-postgresql${VERSION}
-    restart: ${RESTART}
+    image: {{ config.postgres.image }}
+    restart: {{ config.restart }}
+    env_file:
+      - {{ config.location }}/.env
     networks:
       - backend
     volumes:
       - postgresql-data:/var/lib/postgresql/data
+{%- endif %}
 
   zammad-railsserver:
     command: ["zammad-railsserver"]
     depends_on:
       - zammad-memcached
       - zammad-postgresql
-    image: ${IMAGE_REPO}:zammad${VERSION}
-    links:
-      - zammad-elasticsearch
-      - zammad-memcached
-      - zammad-postgresql
-    restart: ${RESTART}
+    image: {{ config.image }}
+    restart: {{ config.restart }}
     networks:
       - frontend
       - backend
@@ -97,10 +95,10 @@ services:
     depends_on:
       - zammad-memcached
       - zammad-railsserver
-    image: ${IMAGE_REPO}:zammad${VERSION}
+    image: {{ config.image }}
     networks:
       - backend
-    restart: ${RESTART}
+    restart: {{ config.restart }}
     volumes:
       - zammad-data:/opt/zammad
 
@@ -109,11 +107,11 @@ services:
     depends_on:
       - zammad-memcached
       - zammad-railsserver
-    image: ${IMAGE_REPO}:zammad${VERSION}
+    image: {{ config.image }}
     networks:
       - frontend
       - backend
-    restart: ${RESTART}
+    restart: {{ config.restart }}
     volumes:
       - zammad-data:/opt/zammad
 
