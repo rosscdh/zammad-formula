@@ -2,7 +2,7 @@
 version: "3"
 
 services:
-  {%- if config.local_backups %}
+  {%- if config.local_backups == 'true' %}
   zammad-backup:
     command: ["zammad-backup"]
     depends_on:
@@ -22,7 +22,7 @@ services:
       - zammad-data:/opt/zammad
   {%- endif %}
 
-  {%- if config.elasticsearch.enabled %}
+  {%- if config.elasticsearch.enabled == 'true' %}
   zammad-elasticsearch:
     env_file:
       - {{ config.location }}/.env
@@ -38,7 +38,7 @@ services:
 
   zammad-init:
     command: ["zammad-init"]
-    {%- if config.postgres.enabled %}
+    {%- if config.postgres.enabled == 'true' %}
     depends_on:
       - zammad-postgresql
     {%- endif %}
@@ -51,7 +51,7 @@ services:
     volumes:
       - zammad-data:/opt/zammad
 
-  {%- if config.memcache.enabled %}
+  {%- if config.memcache.enabled == 'true' %}
   zammad-memcached:
     command: memcached -m {{ config.memcache.mem }}
     env_file:
@@ -76,7 +76,7 @@ services:
     volumes:
       - zammad-data:/opt/zammad
 
-  {%- if config.postgres.enabled %}
+  {%- if config.postgres.enabled == 'true' %}
   zammad-postgresql:
     image: {{ config.postgres.image }}
     restart: {{ config.restart }}
@@ -122,15 +122,15 @@ services:
       - zammad-data:/opt/zammad
 
 volumes:
-  {%- if config.elasticsearch.enabled %}
+  {%- if config.elasticsearch.enabled == 'true' %}
   elasticsearch-data:
     driver: local
   {%- endif %}
-  {%- if config.postgres.enabled %}
+  {%- if config.postgres.enabled == 'true' %}
   postgresql-data:
     driver: local
   {%- endif %}
-  {%- if config.local_backups %}
+  {%- if config.local_backups == 'true' %}
   zammad-backup:
     driver: local
   {%- endif %}
