@@ -1,6 +1,6 @@
 zammad:
   location: /opt/zammad
-  image: zammad/zammad-docker-compose:zammad-3.4.0-17
+  image: zammad/zammad-docker-compose:zammad-3.5.0-2
   port: 8008
   restart: unless-stopped
   local_backups: 'true'
@@ -11,11 +11,14 @@ zammad:
     POSTGRES_DB: zammad_production
   elasticsearch:
     enabled: 'true'
-    image: zammad/zammad-docker-compose:zammad-elasticsearch-3.4.0-17
+    image: zammad/zammad-docker-compose:zammad-elasticsearch-3.5.0-2
   postgres:
     enabled: 'true'
-    image: zammad/zammad-docker-compose:zammad-postgresql-3.4.0-17
+    image: zammad/zammad-docker-compose:zammad-postgresql-3.5.0-2
   memcache:
     enabled: 'true'
     mem: 128M
     image: memcached:1.5.22-alpine
+  nginx:
+    enabled: 'true'
+    image: zammad/zammad-docker-compose:zammad-nginx-3.5.0-2

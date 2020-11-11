@@ -62,8 +62,9 @@ services:
       - backend
   {%- endif %}
 
+  {%- if config.memcache.enabled == 'true' %}
   zammad-nginx:
-    image: ${IMAGE_REPO}:zammad${VERSION}
+    image: {{ config.nginx.image }}
     command: ["zammad-nginx"]
     ports:
       - "{{ config.port }}:80"
@@ -75,6 +76,7 @@ services:
     restart: {{ config.restart }}
     volumes:
       - zammad-data:/opt/zammad
+  {%- endif %}
 
   {%- if config.postgres.enabled == 'true' %}
   zammad-postgresql:
