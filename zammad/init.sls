@@ -25,7 +25,16 @@ zammad_compose_file:
   - source: salt://zammad/files/docker-compose.yml.jinja2
   - template: jinja
 
-{{ config.location }}/docker-compose.yml:
+
+zammad-compose-down:
+  cmd.run:
+    - cwd: {{ config.location }}
+    - name: docker-compose stop
+    - watch:
+      - file: {{ config.location }}/docker-compose.yml
+      - file: {{ config.location }}/.env
+      
+zammad-compose-up:
   cmd.run:
     - cwd: {{ config.location }}
     - name: docker-compose up -d
