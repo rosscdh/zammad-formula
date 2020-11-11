@@ -62,7 +62,7 @@ services:
       - backend
   {%- endif %}
 
-  {%- if config.memcache.enabled == 'true' %}
+  {%- if config.nginx.enabled == 'true' %}
   zammad-nginx:
     image: {{ config.nginx.image }}
     command: ["zammad-nginx"]
