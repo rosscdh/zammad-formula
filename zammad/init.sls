@@ -1,5 +1,5 @@
 {%- from "zammad/map.jinja" import config with context %}
-python-pip:
+zammad_python-pip:
   pkg.installed
 
 zammad_install_compose:
