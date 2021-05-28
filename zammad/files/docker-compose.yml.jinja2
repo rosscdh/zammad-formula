@@ -67,7 +67,7 @@ services:
     image: {{ config.nginx.image }}
     command: ["zammad-nginx"]
     ports:
-      - "{{ config.port }}:80"
+      - "{{ config.port }}:8080"
     depends_on:
       - zammad-railsserver
     image: {{ config.image }}
